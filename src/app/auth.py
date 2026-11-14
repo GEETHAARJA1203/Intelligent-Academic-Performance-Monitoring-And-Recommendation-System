@@ -7,13 +7,11 @@ from datetime import datetime
 # ---------------------------------------------------------
 # DATABASE PATH
 # ---------------------------------------------------------
-
 BASE_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
+    os.path.join(os.path.dirname(__file__), "..", "..")
 )
 
 DATABASE_PATH = os.path.join(BASE_DIR, "student_database.db")
-
 
 # ---------------------------------------------------------
 # DATABASE CONNECTION

@@ -1,0 +1,5 @@
+Student_ID,Name,Department,Semester,Attendance,Current_CGPA
+TEST001,Arjun,CSE,6,85,8.2
+,Meena,CSE,6,90,8.5
+TEST001,Ravi,CSE,6,75,7.5
+TEST002,Kiran,CSE,6,abc,8.0

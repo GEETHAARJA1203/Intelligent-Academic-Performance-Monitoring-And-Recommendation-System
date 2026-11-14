@@ -1,0 +1,121 @@
+Student_ID,Name,Department,Semester,Actual_Final_Marks,Predicted_Final_Marks,Risk_Level,Recommendation
+STU111,Student 111,Computer Science,7,52.7,53.75,High Risk,Priority faculty review; prepare an individual study plan and monitor progress.
+STU059,Student 059,Computer Science,7,49.9,55.11,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU053,Student 053,CSE-AI,8,54.7,55.26,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU049,Student 049,Computer Science,5,57.2,56.22,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU030,Student 030,CSE-AI,5,54.0,56.37,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU019,Student 019,Computer Science,7,52.1,56.51,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU056,Student 056,Computer Science,5,59.6,56.6,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU090,Student 090,ECE,5,55.7,57.21,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU009,Student 009,ECE,5,58.9,57.77,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU100,Student 100,Computer Science,5,63.9,57.87,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU112,Student 112,Computer Science,8,56.5,58.02,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU020,Student 020,Computer Science,7,57.6,58.36,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU105,Student 105,Computer Science,5,58.1,59.09,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU008,Student 008,CSE-AI,7,62.4,59.24,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU023,Student 023,ECE,6,59.2,59.38,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU039,Student 039,ECE,5,60.5,59.49,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU022,Student 022,ECE,7,65.5,59.89,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU066,Student 066,ECE,6,58.0,59.98,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU069,Student 069,Computer Science,7,58.6,60.0,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU031,Student 031,Computer Science,8,59.1,60.09,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU117,Student 117,CSE-AI,8,58.8,60.18,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU061,Student 061,Computer Science,7,64.2,60.24,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU040,Student 040,Computer Science,8,66.2,60.28,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU005,Student 005,Computer Science,8,60.7,60.51,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU104,Student 104,CSE-AI,7,59.3,60.54,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU076,Student 076,Information Technology,7,60.0,60.85,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU109,Student 109,Computer Science,7,57.6,60.98,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU051,Student 051,Computer Science,8,60.8,61.13,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU106,Student 106,Information Technology,7,60.6,61.54,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU091,Student 091,Computer Science,5,62.3,61.88,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU107,Student 107,ECE,8,56.9,61.97,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU098,Student 098,CSE-AI,7,61.6,62.16,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU074,Student 074,CSE-AI,7,66.4,62.22,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU004,Student 004,CSE-AI,5,60.7,62.33,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU025,Student 025,CSE-AI,7,55.9,62.43,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU077,Student 077,ECE,5,58.4,62.52,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU033,Student 033,ECE,5,62.5,62.76,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU102,Student 102,ECE,8,63.6,62.8,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU021,Student 021,Information Technology,7,64.7,62.92,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU029,Student 029,Computer Science,7,61.7,62.93,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU072,Student 072,Information Technology,6,65.7,63.05,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU110,Student 110,CSE-AI,7,62.2,63.05,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU016,Student 016,Computer Science,6,62.9,63.22,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU085,Student 085,CSE-AI,8,64.9,63.35,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU038,Student 038,CSE-AI,7,64.4,63.55,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU120,Student 120,CSE-AI,6,62.7,63.57,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU011,Student 011,Information Technology,8,59.8,63.69,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU041,Student 041,Computer Science,8,63.2,63.69,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU028,Student 028,Information Technology,6,60.2,63.75,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU043,Student 043,ECE,6,62.2,63.77,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU088,Student 088,Computer Science,7,67.9,63.8,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU096,Student 096,Information Technology,8,57.8,63.81,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU099,Student 099,ECE,6,66.6,63.92,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU050,Student 050,ECE,5,64.0,63.95,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU048,Student 048,Computer Science,5,66.3,64.17,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU018,Student 018,Information Technology,8,67.4,64.22,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU003,Student 003,Computer Science,8,64.6,64.25,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU057,Student 057,Computer Science,8,61.9,64.41,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU080,Student 080,CSE-AI,8,68.5,64.64,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU032,Student 032,CSE-AI,7,65.1,64.79,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU115,Student 115,ECE,5,66.9,64.83,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU046,Student 046,CSE-AI,7,67.9,64.84,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU035,Student 035,CSE-AI,7,64.0,64.85,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU082,Student 082,ECE,7,67.0,64.86,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU071,Student 071,CSE-AI,5,61.8,64.87,Moderate Risk,"Provide additional practice, monitor attendance, and review assignment completion."
+STU103,Student 103,Information Technology,8,66.0,65.02,Low Risk,Continue current study habits and maintain regular academic progress.
+STU081,Student 081,Computer Science,7,64.7,65.09,Low Risk,Continue current study habits and maintain regular academic progress.
+STU054,Student 054,Computer Science,7,65.6,65.29,Low Risk,Continue current study habits and maintain regular academic progress.
+STU001,Student 001,CSE-AI,8,58.2,65.4,Low Risk,Continue current study habits and maintain regular academic progress.
+STU118,Student 118,CSE-AI,6,70.5,65.5,Low Risk,Continue current study habits and maintain regular academic progress.
+STU078,Student 078,CSE-AI,5,67.8,65.54,Low Risk,Continue current study habits and maintain regular academic progress.
+STU006,Student 006,Information Technology,5,64.1,65.64,Low Risk,Continue current study habits and maintain regular academic progress.
+STU093,Student 093,ECE,6,65.7,65.76,Low Risk,Continue current study habits and maintain regular academic progress.
+STU013,Student 013,Information Technology,8,66.5,65.82,Low Risk,Continue current study habits and maintain regular academic progress.
+STU079,Student 079,Information Technology,6,66.8,65.83,Low Risk,Continue current study habits and maintain regular academic progress.
+STU092,Student 092,Information Technology,6,69.2,65.86,Low Risk,Continue current study habits and maintain regular academic progress.
+STU068,Student 068,ECE,6,67.4,66.24,Low Risk,Continue current study habits and maintain regular academic progress.
+STU075,Student 075,Computer Science,7,64.2,66.45,Low Risk,Continue current study habits and maintain regular academic progress.
+STU058,Student 058,Computer Science,8,66.9,66.5,Low Risk,Continue current study habits and maintain regular academic progress.
+STU089,Student 089,Information Technology,8,64.9,66.67,Low Risk,Continue current study habits and maintain regular academic progress.
+STU084,Student 084,Information Technology,8,65.6,66.69,Low Risk,Continue current study habits and maintain regular academic progress.
+STU045,Student 045,CSE-AI,5,61.9,67.04,Low Risk,Continue current study habits and maintain regular academic progress.
+STU036,Student 036,Information Technology,5,65.1,67.1,Low Risk,Continue current study habits and maintain regular academic progress.
+STU044,Student 044,CSE-AI,5,64.7,67.12,Low Risk,Continue current study habits and maintain regular academic progress.
+STU113,Student 113,Information Technology,7,65.7,67.3,Low Risk,Continue current study habits and maintain regular academic progress.
+STU042,Student 042,ECE,6,72.9,67.33,Low Risk,Continue current study habits and maintain regular academic progress.
+STU101,Student 101,Information Technology,5,66.1,67.4,Low Risk,Continue current study habits and maintain regular academic progress.
+STU065,Student 065,Information Technology,6,65.1,67.63,Low Risk,Continue current study habits and maintain regular academic progress.
+STU012,Student 012,Computer Science,7,67.6,67.73,Low Risk,Continue current study habits and maintain regular academic progress.
+STU017,Student 017,Information Technology,5,68.4,67.79,Low Risk,Continue current study habits and maintain regular academic progress.
+STU094,Student 094,ECE,8,70.9,67.98,Low Risk,Continue current study habits and maintain regular academic progress.
+STU037,Student 037,Information Technology,5,66.3,68.11,Low Risk,Continue current study habits and maintain regular academic progress.
+STU052,Student 052,Information Technology,8,72.0,68.28,Low Risk,Continue current study habits and maintain regular academic progress.
+STU015,Student 015,Information Technology,7,68.1,68.3,Low Risk,Continue current study habits and maintain regular academic progress.
+STU024,Student 024,Computer Science,5,71.5,68.36,Low Risk,Continue current study habits and maintain regular academic progress.
+STU002,Student 002,CSE-AI,8,72.7,68.39,Low Risk,Continue current study habits and maintain regular academic progress.
+STU007,Student 007,Information Technology,6,69.3,68.39,Low Risk,Continue current study habits and maintain regular academic progress.
+STU070,Student 070,Computer Science,5,66.2,68.41,Low Risk,Continue current study habits and maintain regular academic progress.
+STU095,Student 095,Information Technology,8,67.6,68.48,Low Risk,Continue current study habits and maintain regular academic progress.
+STU114,Student 114,ECE,8,65.8,68.63,Low Risk,Continue current study habits and maintain regular academic progress.
+STU116,Student 116,Information Technology,7,72.2,68.67,Low Risk,Continue current study habits and maintain regular academic progress.
+STU067,Student 067,ECE,7,69.1,68.72,Low Risk,Continue current study habits and maintain regular academic progress.
+STU108,Student 108,Computer Science,7,71.1,68.75,Low Risk,Continue current study habits and maintain regular academic progress.
+STU087,Student 087,CSE-AI,5,66.3,69.03,Low Risk,Continue current study habits and maintain regular academic progress.
+STU010,Student 010,ECE,8,69.0,69.12,Low Risk,Continue current study habits and maintain regular academic progress.
+STU119,Student 119,ECE,7,61.5,69.13,Low Risk,Continue current study habits and maintain regular academic progress.
+STU034,Student 034,ECE,8,67.4,69.49,Low Risk,Continue current study habits and maintain regular academic progress.
+STU027,Student 027,Information Technology,6,63.3,69.61,Low Risk,Continue current study habits and maintain regular academic progress.
+STU063,Student 063,Information Technology,7,69.0,69.65,Low Risk,Continue current study habits and maintain regular academic progress.
+STU086,Student 086,CSE-AI,8,69.8,69.83,Low Risk,Continue current study habits and maintain regular academic progress.
+STU062,Student 062,Information Technology,7,67.3,70.07,Low Risk,Continue current study habits and maintain regular academic progress.
+STU026,Student 026,CSE-AI,7,69.5,70.24,Low Risk,Continue current study habits and maintain regular academic progress.
+STU073,Student 073,ECE,7,72.1,70.85,Low Risk,Continue current study habits and maintain regular academic progress.
+STU047,Student 047,Computer Science,5,67.9,70.87,Low Risk,Continue current study habits and maintain regular academic progress.
+STU083,Student 083,CSE-AI,6,72.1,71.03,Low Risk,Continue current study habits and maintain regular academic progress.
+STU097,Student 097,Information Technology,7,72.1,71.26,Low Risk,Continue current study habits and maintain regular academic progress.
+STU060,Student 060,ECE,7,70.8,71.63,Low Risk,Continue current study habits and maintain regular academic progress.
+STU064,Student 064,Information Technology,6,74.3,72.58,Low Risk,Continue current study habits and maintain regular academic progress.
+STU055,Student 055,ECE,7,71.1,73.18,Low Risk,Continue current study habits and maintain regular academic progress.
+STU014,Student 014,Information Technology,7,77.3,75.31,Low Risk,Continue current study habits and maintain regular academic progress.
