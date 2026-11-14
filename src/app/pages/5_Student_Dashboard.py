@@ -1,15 +1,17 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
 import os
+import sys
+import html
 from datetime import datetime
 
 
 # ============================================================
 # PAGE CONFIGURATION
 # ============================================================
-
 
 st.set_page_config(
     page_title="Student Academic Performance Dashboard",
@@ -23,44 +25,57 @@ st.set_page_config(
 # PROJECT PATHS
 # ============================================================
 
-# app.py is inside:
-# Trekverse_Student_Performance/src/app/app.py
-#
-# Therefore:
-# app.py -> app -> src -> project root
-
-BASE_DIR = os.path.dirname(
-    os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))
-        )
-    )
-)
-
-RISK_MODEL_PATH = os.path.join(
-    BASE_DIR, "models", "risk_prediction_model.pkl"
+BASE_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..")
 )
 
 MODEL_PATH = os.path.join(
-    BASE_DIR, "models", "academic_performance_model.pkl"
+    BASE_DIR,
+    "models",
+    "academic_performance_model.pkl"
 )
-
-PREPROCESSOR_PATH = None
 
 DATA_PATH = os.path.join(
-    BASE_DIR, "data", "student_academic_data.csv"
+    BASE_DIR,
+    "data",
+    "student_academic_data.csv"
 )
-RISK_MODEL = None
 
-try:
-    risk_bundle = joblib.load(RISK_MODEL_PATH)
-    RISK_MODEL = risk_bundle["model"]
-    RISK_PREPROCESSOR = risk_bundle["preprocessor"]
-    RISK_FEATURES = risk_bundle["features"]
-except Exception as e:
-    RISK_MODEL = None
-    RISK_PREPROCESSOR = None
-    RISK_FEATURES = []
+SRC_DIR = os.path.join(BASE_DIR, "src")
+
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
+
+
+# ============================================================
+# MODEL FEATURES
+# ============================================================
+
+MODEL_FEATURES = [
+    "Department",
+    "Semester",
+    "Attendance",
+    "Internal_Marks",
+    "Assignment_Marks",
+    "Quiz_Marks",
+    "Study_Hours",
+    "Previous_CGPA",
+    "Backlogs",
+    "Assignment_Submission_Rate",
+    "Learning_Activity"
+]
+
+NUMERIC_FEATURES = [
+    "Semester",
+    "Attendance",
+    "Internal_Marks",
+    "Assignment_Marks",
+    "Quiz_Marks",
+    "Study_Hours",
+    "Previous_CGPA",
+    "Backlogs",
+    "Assignment_Submission_Rate"
+]
 
 
 # ============================================================
@@ -68,13 +83,6 @@ except Exception as e:
 # ============================================================
 
 def render_html(content):
-    """
-    Safely render HTML in Streamlit.
-
-    Streamlit can treat HTML that starts with spaces
-    as a code block. We therefore remove leading and
-    trailing spaces from every line before rendering.
-    """
     if content is None:
         return
 
@@ -87,6 +95,13 @@ def render_html(content):
         cleaned_html,
         unsafe_allow_html=True
     )
+
+
+def safe_text(value, default="Not available"):
+    if pd.isna(value):
+        return default
+
+    return html.escape(str(value))
 
 
 # ============================================================
@@ -105,8 +120,6 @@ render_html("""
     padding-bottom: 2rem;
 }
 
-/* Sidebar */
-
 section[data-testid="stSidebar"] {
     background: linear-gradient(
         180deg,
@@ -118,8 +131,6 @@ section[data-testid="stSidebar"] {
 section[data-testid="stSidebar"] * {
     color: white !important;
 }
-
-/* Header */
 
 .dashboard-header {
     background: linear-gradient(
@@ -146,8 +157,6 @@ section[data-testid="stSidebar"] * {
     opacity: 0.9;
 }
 
-/* Cards */
-
 .metric-card {
     background: white;
     border-radius: 16px;
@@ -170,9 +179,10 @@ section[data-testid="stSidebar"] * {
 
 .metric-value {
     color: #0f172a;
-    font-size: 27px;
+    font-size: 25px;
     font-weight: 700;
     margin-top: 5px;
+    overflow-wrap: anywhere;
 }
 
 .metric-description {
@@ -180,8 +190,6 @@ section[data-testid="stSidebar"] * {
     font-size: 12px;
     margin-top: 6px;
 }
-
-/* Section */
 
 .section-title {
     font-size: 23px;
@@ -191,18 +199,23 @@ section[data-testid="stSidebar"] * {
     margin-bottom: 15px;
 }
 
-/* Info card */
-
-.info-card {
+.recommendation-card {
     background: white;
-    padding: 22px;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-    margin-bottom: 15px;
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    border-left: 5px solid #2563eb;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
 }
 
-/* Status */
+.recommendation-card h4 {
+    margin-top: 0;
+    color: #1e3a8a;
+}
+
+.recommendation-card p {
+    color: #475569;
+}
 
 .status-good {
     background: #dcfce7;
@@ -228,28 +241,6 @@ section[data-testid="stSidebar"] * {
     font-weight: 600;
 }
 
-/* Recommendation */
-
-.recommendation-card {
-    background: white;
-    padding: 18px;
-    border-radius: 14px;
-    margin-bottom: 12px;
-    border-left: 5px solid #2563eb;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-}
-
-.recommendation-card h4 {
-    margin-top: 0;
-    color: #1e3a8a;
-}
-
-.recommendation-card p {
-    color: #475569;
-}
-
-/* Footer */
-
 .footer {
     text-align: center;
     padding: 25px;
@@ -263,37 +254,105 @@ section[data-testid="stSidebar"] * {
 
 
 # ============================================================
-# LOAD DATASET
+# LOAD STUDENT RECORDS FROM SQLITE DATABASE
 # ============================================================
 
-if not os.path.exists(DATA_PATH):
+try:
+    from database import get_students
 
+    @st.cache_data(ttl=30)
+    def load_student_data():
+        records = get_students()
+
+        rows = [
+            dict(record)
+            for record in records
+        ]
+
+        if not rows:
+            return pd.DataFrame()
+
+        database_df = pd.DataFrame(rows)
+
+        aliases = {
+            "student_name": "name",
+            "study_time": "studytime",
+            "final_marks": "final_grade",
+            "predicted_score": "predicted_final_marks"
+        }
+
+        database_df = database_df.rename(
+            columns=aliases
+        )
+
+        database_df.columns = (
+            database_df.columns.astype(str)
+            .str.strip()
+            .str.lower()
+        )
+
+        return database_df
+
+    df = load_student_data()
+
+except Exception as error:
     st.error(
-        f"Dataset not found.\n\n"
-        f"Expected location:\n{DATA_PATH}"
+        "Unable to load student records from SQLite."
+    )
+    st.code(str(error))
+    st.stop()
+
+
+if df.empty:
+    st.warning(
+        "No student records were found in SQLite."
+    )
+    st.stop()
+
+
+# ============================================================
+# LOAD ACADEMIC PERFORMANCE MODEL
+# ============================================================
+
+model = None
+model_available = False
+model_load_error = None
+
+if os.path.isfile(MODEL_PATH):
+
+    try:
+        model = joblib.load(MODEL_PATH)
+
+        if (
+            hasattr(model, "predict")
+            and hasattr(model, "named_steps")
+            and "preprocessor" in model.named_steps
+            and "model" in model.named_steps
+        ):
+            model_available = True
+
+        else:
+            model_load_error = (
+                "The saved model is not the expected "
+                "preprocessing pipeline."
+            )
+
+    except Exception as error:
+        model_load_error = str(error)
+
+else:
+    model_load_error = (
+        f"Model file not found: {MODEL_PATH}"
     )
 
-    st.stop()
 
-
-try:
-
-    df = pd.read_csv(DATA_PATH)
-
-except Exception as e:
-
-    st.error(f"Unable to read dataset: {e}")
-    st.stop()
-
-
-# Clean column names
-
-df.columns = (
-    df.columns
-    .astype(str)
-    .str.strip()
-    .str.lower()
-)
+if not model_available:
+    st.error(
+        "Academic performance model could not be loaded."
+    )
+    st.code(
+        model_load_error or "Unknown model error."
+    )
 
 
 # ============================================================
@@ -301,10 +360,9 @@ df.columns = (
 # ============================================================
 
 target_candidates = [
-    "g3",
     "final_grade",
-    "final_score",
     "final_marks",
+    "final_score",
     "target",
     "performance",
     "score",
@@ -313,53 +371,13 @@ target_candidates = [
     "result"
 ]
 
-target_column = None
-
-for col in target_candidates:
-
-    if col in df.columns:
-        target_column = col
-        break
-
-
-# ============================================================
-# LOAD MODEL
-# ============================================================
-
-model = None
-preprocessor = None
-model_available = False
-
-if os.path.exists(MODEL_PATH):
-    try:
-        # The saved model is already a complete Pipeline.
-        model = joblib.load(MODEL_PATH)
-        model_available = True
-    except Exception as e:
-        st.warning(f"Performance model could not be loaded: {e}")
-
-# The Pipeline includes its own preprocessing.
-preprocessor = None
-
-
-if PREPROCESSOR_PATH and os.path.exists(PREPROCESSOR_PATH):
-
-    try:
-
-        preprocessor = joblib.load(
-            PREPROCESSOR_PATH
-        )
-
-    except Exception as e:
-
-        preprocessor = None
-        st.warning(
-            f"Preprocessor could not be loaded: {e}"
-        )
-
-
-if model is not None:
-    model_available = True
+target_column = next(
+    (
+        col for col in target_candidates
+        if col in df.columns
+    ),
+    None
+)
 
 
 # ============================================================
@@ -367,38 +385,107 @@ if model is not None:
 # ============================================================
 
 st.sidebar.markdown(
-    """<div style="text-align:center;">
-<div style="font-size:50px;">🎓</div>
-<h2>Student Dashboard</h2>
-<p>AI Academic Analytics</p>
-</div>""",
+    """
+    <div style="text-align:center;">
+        <div style="font-size:50px;">🎓</div>
+        <h2>Student Dashboard</h2>
+        <p>AI Academic Analytics</p>
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
 st.sidebar.markdown("---")
 
 
-student_name = st.sidebar.text_input(
-    "👤 Student Name",
-    value="Student"
+
+# ============================================================
+# ROLE-BASED STUDENT SELECTION
+# ============================================================
+
+if "student_id" not in df.columns:
+    st.error("Student_ID is missing from database records.")
+    st.stop()
+
+student_ids = sorted(
+    df["student_id"]
+    .dropna()
+    .astype(str)
+    .unique()
+    .tolist()
 )
 
-student_id = st.sidebar.text_input(
-    "🆔 Student ID",
-    value="STU001"
+if not student_ids:
+    st.warning("No Student_ID values are available.")
+    st.stop()
+
+user = st.session_state.get("user")
+
+if not user:
+    st.error("Please login to access the dashboard.")
+    st.stop()
+
+user_role = str(user.get("role", "")).strip().lower()
+
+if user_role == "student":
+
+    student_id = user.get("student_id")
+
+    if not student_id:
+        st.error("No Student ID is linked to this account.")
+        st.stop()
+
+    student_id = str(student_id)
+
+    if student_id not in student_ids:
+        st.error(
+            f"No academic record found for Student ID: {student_id}"
+        )
+        st.stop()
+
+    st.sidebar.success(f"Logged in: {user['username']}")
+    st.sidebar.info(f"Your Student ID: {student_id}")
+
+else:
+
+    student_id = st.sidebar.selectbox(
+        "Select Student ID",
+        options=student_ids
+    )
+
+selected_rows = df[
+    df["student_id"].astype(str) == str(student_id)
+]
+
+if selected_rows.empty:
+    st.error("Selected student record was not found.")
+    st.stop()
+
+selected_student = selected_rows.iloc[0]
+
+student_name = safe_text(
+    selected_student.get("name", "Student"),
+    "Student"
 )
 
-department = st.sidebar.text_input(
-    "🏫 Department",
-    value="Information Technology"
+department = safe_text(
+    selected_student.get("department", "Not available")
 )
 
-semester = st.sidebar.number_input(
-    "📚 Semester",
-    min_value=1,
-    max_value=12,
-    value=8
+semester_value = pd.to_numeric(
+    selected_student.get("semester", 1),
+    errors="coerce"
 )
+
+semester = (
+    int(semester_value)
+    if pd.notna(semester_value) and semester_value >= 1
+    else 1
+)
+
+st.sidebar.caption(f"Student: {student_name}")
+st.sidebar.caption(f"Department: {department}")
+st.sidebar.caption(f"Semester: {semester}")
 
 st.sidebar.markdown("---")
 
@@ -415,14 +502,8 @@ st.sidebar.info(
 
 render_html(f"""
 <div class="dashboard-header">
-
     <h1>🎓 Welcome, {student_name}</h1>
-
-    <p>
-        Student Academic Performance
-        Intelligence Dashboard
-    </p>
-
+    <p>Student Academic Performance Intelligence Dashboard</p>
 </div>
 """)
 
@@ -437,183 +518,109 @@ render_html("""
 </div>
 """)
 
-info1, info2, info3, info4 = st.columns(4)
+info_columns = st.columns(4)
 
-with info1:
+student_information = [
+    ("👤", "Student", student_name),
+    ("🆔", "Student ID", safe_text(student_id)),
+    ("🏫", "Department", department),
+    ("📚", "Semester", str(semester))
+]
 
-    render_html(f"""
-    <div class="metric-card">
+for column, information in zip(
+    info_columns,
+    student_information
+):
+    icon, title, value = information
 
-        <div class="metric-icon">👤</div>
-
-        <div class="metric-title">
-            Student
+    with column:
+        render_html(f"""
+        <div class="metric-card">
+            <div class="metric-icon">{icon}</div>
+            <div class="metric-title">{title}</div>
+            <div class="metric-value">{value}</div>
         </div>
-
-        <div class="metric-value">
-            {student_name}
-        </div>
-
-    </div>
-    """)
-
-
-with info2:
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">🆔</div>
-
-        <div class="metric-title">
-            Student ID
-        </div>
-
-        <div class="metric-value">
-            {student_id}
-        </div>
-
-    </div>
-    """)
-
-
-with info3:
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">🏫</div>
-
-        <div class="metric-title">
-            Department
-        </div>
-
-        <div class="metric-value">
-            {department}
-        </div>
-
-    </div>
-    """)
-
-
-with info4:
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">📚</div>
-
-        <div class="metric-title">
-            Semester
-        </div>
-
-        <div class="metric-value">
-            {semester}
-        </div>
-
-    </div>
-    """)
+        """)
 
 
 # ============================================================
-# DETECT COMMON ACADEMIC FEATURES
-# ============================================================
-
-def find_column(possible_names):
-
-    for name in possible_names:
-
-        if name in df.columns:
-            return name
-
-    return None
-
-
-studytime_col = find_column([
-    "studytime",
-    "study_time",
-    "study_hours",
-    "studyhours",
-    "hours_studied"
-])
-
-absences_col = find_column([
-    "absences",
-    "absence",
-    "absent_days",
-    "absent",
-    "attendance_absences"
-])
-
-failures_col = find_column([
-    "failures",
-    "failure",
-    "previous_failures",
-    "backlogs"
-])
-
-goout_col = find_column([
-    "goout",
-    "social_activity",
-    "social_activities"
-])
-
-freetime_col = find_column([
-    "freetime",
-    "free_time"
-])
-
-health_col = find_column([
-    "health",
-    "health_status"
-])
-
-famrel_col = find_column([
-    "famrel",
-    "family_relationship"
-])
-
-traveltime_col = find_column([
-    "traveltime",
-    "travel_time"
-])
-
-attendance_col = find_column([
-    "attendance",
-    "attendance_percentage",
-    "attendance_percent"
-])
-
-
-# ============================================================
-# GET SAFE VALUE
+# GET STUDENT VALUES
 # ============================================================
 
 def get_numeric_value(column_name, default=0):
 
-    if column_name is None:
+    if column_name not in selected_student.index:
         return default
 
-    try:
+    value = pd.to_numeric(
+        pd.Series(
+            [selected_student[column_name]]
+        ),
+        errors="coerce"
+    ).iloc[0]
 
-        value = pd.to_numeric(
-            df[column_name],
-            errors="coerce"
-        ).median()
-
-        if pd.isna(value):
-            return default
-
-        return float(value)
-
-    except Exception:
-
+    if pd.isna(value):
         return default
 
+    return float(value)
+
+
+studytime_col = next(
+    (
+        col for col in [
+            "studytime",
+            "study_time",
+            "study_hours",
+            "studyhours",
+            "hours_studied"
+        ]
+        if col in df.columns
+    ),
+    None
+)
+
+absences_col = next(
+    (
+        col for col in [
+            "absences",
+            "absence",
+            "absent_days",
+            "absent",
+            "attendance_absences"
+        ]
+        if col in df.columns
+    ),
+    None
+)
+
+failures_col = next(
+    (
+        col for col in [
+            "failures",
+            "failure",
+            "previous_failures",
+            "backlogs"
+        ]
+        if col in df.columns
+    ),
+    None
+)
+
+attendance_col = next(
+    (
+        col for col in [
+            "attendance",
+            "attendance_percentage",
+            "attendance_percent"
+        ]
+        if col in df.columns
+    ),
+    None
+)
 
 studytime_value = get_numeric_value(
     studytime_col,
-    2
+    0
 )
 
 absences_value = get_numeric_value(
@@ -631,188 +638,195 @@ attendance_value = get_numeric_value(
     0
 )
 
+internal_marks_value = get_numeric_value(
+    "internal_marks",
+    0
+)
+
+assignment_marks_value = get_numeric_value(
+    "assignment_marks",
+    0
+)
+
+quiz_marks_value = get_numeric_value(
+    "quiz_marks",
+    0
+)
+
+previous_cgpa_value = get_numeric_value(
+    "previous_cgpa",
+    0
+)
+
+current_cgpa_value = get_numeric_value(
+    "current_cgpa",
+    0
+)
+
+backlogs_value = get_numeric_value(
+    "backlogs",
+    0
+)
 
 
-# PREDICTION
+# ============================================================
+# PREDICTION USING THE SELECTED STUDENT'S DATA
 # ============================================================
 
 predicted_score = None
 prediction_error = None
+input_df = None
 
 if model_available:
+
     try:
-        # Use the exact features expected by the saved model
-        if hasattr(model, "feature_names_in_"):
-            required_features = list(model.feature_names_in_)
-        else:
-            required_features = [
-                "Department",
-                "Semester",
-                "Attendance",
-                "Internal_Marks",
-                "Assignment_Marks",
-                "Quiz_Marks",
-                "Study_Hours",
-                "Previous_CGPA",
-                "Backlogs",
-                "Assignment_Submission_Rate",
-                "Learning_Activity",
-            ]
+        student_values = {
+            str(col).strip().lower(): selected_student[col]
+            for col in selected_student.index
+        }
 
         input_data = {}
 
-        for feature in required_features:
-            column_name = feature.lower()
+        for feature in MODEL_FEATURES:
 
-            if column_name in df.columns:
-                if pd.api.types.is_numeric_dtype(df[column_name]):
-                    value = pd.to_numeric(
-                        df[column_name], errors="coerce"
-                    ).median()
-                    input_data[feature] = (
-                        0 if pd.isna(value) else value
-                    )
-                else:
-                    values = df[column_name].mode()
-                    input_data[feature] = (
-                        values.iloc[0] if not values.empty else ""
-                    )
-            else:
-                input_data[feature] = (
-                    department if column_name == "department"
-                    else semester if column_name == "semester"
-                    else 0
+            feature_key = feature.lower()
+
+            if feature_key not in student_values:
+                raise ValueError(
+                    f"Student record is missing required field: {feature}"
                 )
 
+            input_data[feature] = student_values[feature_key]
+
         input_df = pd.DataFrame(
-            [input_data], columns=required_features
+            [input_data],
+            columns=MODEL_FEATURES
         )
 
-        predicted_score = float(model.predict(input_df)[0])
-        predicted_score = max(0, min(20, predicted_score))
+        # Convert numeric columns.
+        for column in NUMERIC_FEATURES:
 
-    except Exception as e:
-        prediction_error = str(e)
+            input_df[column] = pd.to_numeric(
+                input_df[column],
+                errors="coerce"
+            )
+
+        # Convert college marks into the 0–100
+        # training scale used by the model.
+        input_df["Internal_Marks"] = (
+            input_df["Internal_Marks"] * 100 / 20
+        )
+
+        input_df["Assignment_Marks"] = (
+            input_df["Assignment_Marks"] * 100 / 10
+        )
+
+        input_df["Quiz_Marks"] = (
+            input_df["Quiz_Marks"] * 100 / 10
+        )
+
+        # Validate required numeric inputs.
+        if input_df[NUMERIC_FEATURES].isnull().any().any():
+            raise ValueError(
+                "Required academic fields are missing or invalid. "
+                "Please update the student's records."
+            )
+
+        if not np.isfinite(
+            input_df[NUMERIC_FEATURES].to_numpy(dtype=float)
+        ).all():
+            raise ValueError(
+                "Invalid numeric values found in student records."
+            )
+
+        # Predict using the complete saved pipeline.
+        prediction = model.predict(input_df)
+
+        predicted_score = float(prediction[0])
+
+        if not np.isfinite(predicted_score):
+            raise ValueError(
+                "The model returned an invalid prediction."
+            )
+
+    except Exception as error:
+        prediction_error = str(error)
         predicted_score = None
 
+else:
+    prediction_error = (
+        model_load_error or
+        "Academic prediction model is unavailable."
+    )
 
 
+if predicted_score is None:
+    st.warning("Student prediction is currently unavailable.")
+    st.error(prediction_error or "Prediction could not be generated.")
 
 
 # ============================================================
-# FALLBACK PREDICTION
+# PERFORMANCE STATUS AND RISK LEVEL
 # ============================================================
+
+stored_risk = str(
+    selected_student.get("risk_level", "")
+).strip().lower()
+
+risk_mapping = {
+    "low": "Low Risk",
+    "low risk": "Low Risk",
+    "moderate": "Moderate Risk",
+    "moderate risk": "Moderate Risk",
+    "medium": "Moderate Risk",
+    "high": "High Risk",
+    "high risk": "High Risk"
+}
+
+if stored_risk in risk_mapping:
+
+    risk_level = risk_mapping[stored_risk]
+
+elif predicted_score is not None:
+
+    if predicted_score >= 75:
+        risk_level = "Low Risk"
+
+    elif predicted_score >= 50:
+        risk_level = "Moderate Risk"
+
+    else:
+        risk_level = "High Risk"
+
+else:
+    risk_level = "Unavailable"
+
 
 if predicted_score is None:
 
-    # If the existing model does not match
-    # the new dataset, show a safe academic
-    # indicator instead of crashing.
+    performance_status = "Prediction Unavailable"
+    performance_class = "status-warning"
 
-    if target_column:
+elif predicted_score >= 75:
 
-        try:
-
-            target_values = pd.to_numeric(
-                df[target_column],
-                errors="coerce"
-            ).dropna()
-
-            if len(target_values) > 0:
-
-                predicted_score = float(
-                    target_values.mean()
-                )
-
-            else:
-
-                predicted_score = 10.0
-
-        except Exception:
-
-            predicted_score = 10.0
-
-    else:
-
-        predicted_score = 10.0
-
-
-
-# ============================================================
-# PERFORMANCE STATUS AND ML RISK PREDICTION
-# ============================================================
-
-# Keep the existing performance status based on predicted score
-if predicted_score >= 15:
     performance_status = "Excellent Performance"
     performance_class = "status-good"
-    score_based_risk = "Low Risk"
 
-elif predicted_score >= 12:
+elif predicted_score >= 60:
+
     performance_status = "Good Performance"
     performance_class = "status-good"
-    score_based_risk = "Low Risk"
 
-elif predicted_score >= 8:
+elif predicted_score >= 40:
+
     performance_status = "Needs Attention"
     performance_class = "status-warning"
-    score_based_risk = "Moderate Risk"
 
 else:
+
     performance_status = "At Risk"
     performance_class = "status-danger"
-    score_based_risk = "High Risk"
 
-# Use the trained ML model when available
-risk_level = score_based_risk
-
-try:
-    if (
-        RISK_MODEL is not None
-        and RISK_PREPROCESSOR is not None
-        and RISK_FEATURES
-    ):
-        risk_input = {}
-
-        # Use the selected student's dataset row when available
-        student_rows = df[
-            df["student_id"].astype(str) == str(student_id)
-        ] if "student_id" in df.columns else pd.DataFrame()
-
-        for feature in RISK_FEATURES:
-            feature_lower = feature.lower()
-
-            if not student_rows.empty and feature_lower in student_rows.columns:
-                risk_input[feature] = student_rows.iloc[0][feature_lower]
-            elif feature_lower in df.columns:
-                if pd.api.types.is_numeric_dtype(df[feature_lower]):
-                    risk_input[feature] = df[feature_lower].median()
-                else:
-                    risk_input[feature] = df[feature_lower].mode().iloc[0]
-            else:
-                # Safe fallback for a missing feature
-                risk_input[feature] = 0
-
-        risk_input_df = pd.DataFrame(
-            [risk_input], columns=RISK_FEATURES
-        )
-
-        transformed_input = RISK_PREPROCESSOR.transform(risk_input_df)
-        predicted_risk = RISK_MODEL.predict(transformed_input)[0]
-
-        risk_map = {
-            "Low": "Low Risk",
-            "Moderate": "Moderate Risk",
-            "High": "High Risk",
-        }
-
-        risk_level = risk_map.get(
-            str(predicted_risk), score_based_risk
-        )
-
-except Exception as e:
-    # Keep the dashboard working if risk prediction fails
-    risk_level = score_based_risk
 
 # ============================================================
 # PERFORMANCE OVERVIEW
@@ -826,26 +840,22 @@ render_html("""
 
 m1, m2, m3, m4 = st.columns(4)
 
-
 with m1:
+
+    score_display = (
+        f"{predicted_score:.2f}/100"
+        if predicted_score is not None
+        else "Unavailable"
+    )
 
     render_html(f"""
     <div class="metric-card">
-
         <div class="metric-icon">🎯</div>
-
-        <div class="metric-title">
-            Predicted Score
-        </div>
-
-        <div class="metric-value">
-            {predicted_score:.2f}/20
-        </div>
-
+        <div class="metric-title">Predicted Score</div>
+        <div class="metric-value">{score_display}</div>
         <div class="metric-description">
-            AI predicted academic score
+            AI predicted academic marks
         </div>
-
     </div>
     """)
 
@@ -854,21 +864,12 @@ with m2:
 
     render_html(f"""
     <div class="metric-card">
-
         <div class="metric-icon">📈</div>
-
-        <div class="metric-title">
-            Performance
-        </div>
-
-        <div class="metric-value">
-            {performance_status}
-        </div>
-
+        <div class="metric-title">Performance</div>
+        <div class="metric-value">{performance_status}</div>
         <div class="metric-description">
             Based on predicted score
         </div>
-
     </div>
     """)
 
@@ -877,21 +878,12 @@ with m3:
 
     render_html(f"""
     <div class="metric-card">
-
         <div class="metric-icon">⚠️</div>
-
-        <div class="metric-title">
-            AI Risk Level
-        </div>
-
-        <div class="metric-value">
-            {risk_level}
-        </div>
-
+        <div class="metric-title">Risk Level</div>
+        <div class="metric-value">{risk_level}</div>
         <div class="metric-description">
-            Early warning indicator
+            Stored risk classification or indicative estimate
         </div>
-
     </div>
     """)
 
@@ -900,21 +892,12 @@ with m4:
 
     render_html(f"""
     <div class="metric-card">
-
         <div class="metric-icon">📚</div>
-
-        <div class="metric-title">
-            Study Time
-        </div>
-
-        <div class="metric-value">
-            {studytime_value:.0f}
-        </div>
-
+        <div class="metric-title">Study Time</div>
+        <div class="metric-value">{studytime_value:.1f}</div>
         <div class="metric-description">
             Study-time indicator
         </div>
-
     </div>
     """)
 
@@ -923,18 +906,18 @@ with m4:
 # STATUS MESSAGE
 # ============================================================
 
+status_icon = (
+    "🟢" if risk_level == "Low Risk"
+    else "🟡" if risk_level == "Moderate Risk"
+    else "🔴" if risk_level == "High Risk"
+    else "⚪"
+)
+
 render_html(f"""
-<div class="{performance_class}"
-     style="margin-top:20px;">
-
-    {("🟢" if risk_level == "Low Risk"
-      else "🟡" if risk_level == "Moderate Risk"
-      else "🔴")}
-
+<div class="{performance_class}" style="margin-top:20px;">
+    {status_icon}
     {performance_status}
-
     — AI Risk Level: {risk_level}
-
 </div>
 """)
 
@@ -949,99 +932,27 @@ render_html("""
 </div>
 """)
 
-f1, f2, f3, f4 = st.columns(4)
+factor_columns = st.columns(4)
 
+factors = [
+    ("📅", "Absences", f"{absences_value:.0f}"),
+    ("❌", "Previous Failures", f"{failures_value:.0f}"),
+    ("📖", "Study Time", f"{studytime_value:.1f}"),
+    ("🎯", "Attendance", f"{attendance_value:.1f}%")
+]
 
-with f1:
+for column, factor in zip(factor_columns, factors):
 
-    render_html(f"""
-    <div class="metric-card">
+    icon, title, value = factor
 
-        <div class="metric-icon">📅</div>
-
-        <div class="metric-title">
-            Absences
+    with column:
+        render_html(f"""
+        <div class="metric-card">
+            <div class="metric-icon">{icon}</div>
+            <div class="metric-title">{title}</div>
+            <div class="metric-value">{value}</div>
         </div>
-
-        <div class="metric-value">
-            {absences_value:.0f}
-        </div>
-
-        <div class="metric-description">
-            Average dataset value
-        </div>
-
-    </div>
-    """)
-
-
-with f2:
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">❌</div>
-
-        <div class="metric-title">
-            Previous Failures
-        </div>
-
-        <div class="metric-value">
-            {failures_value:.0f}
-        </div>
-
-        <div class="metric-description">
-            Academic difficulty indicator
-        </div>
-
-    </div>
-    """)
-
-
-with f3:
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">📖</div>
-
-        <div class="metric-title">
-            Study Time
-        </div>
-
-        <div class="metric-value">
-            {studytime_value:.0f}
-        </div>
-
-        <div class="metric-description">
-            Study consistency indicator
-        </div>
-
-    </div>
-    """)
-
-
-with f4:
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">🎯</div>
-
-        <div class="metric-title">
-            Attendance
-        </div>
-
-        <div class="metric-value">
-            {attendance_value:.0f}%
-        </div>
-
-        <div class="metric-description">
-            Attendance indicator
-        </div>
-
-    </div>
-    """)
+        """)
 
 
 # ============================================================
@@ -1056,92 +967,36 @@ render_html("""
 
 d1, d2, d3, d4 = st.columns(4)
 
+dataset_metrics = [
+    ("👥", "Total Records", str(len(df))),
+    ("📊", "Total Columns", str(len(df.columns))),
+    (
+        "🔢",
+        "Numerical Columns",
+        str(len(df.select_dtypes(include=np.number).columns))
+    ),
+    ("🎯", "Target Column", target_column or "Not Found")
+]
 
-with d1:
+for column, metric in zip(
+    [d1, d2, d3, d4],
+    dataset_metrics
+):
 
-    render_html(f"""
-    <div class="metric-card">
+    icon, title, value = metric
 
-        <div class="metric-icon">👥</div>
-
-        <div class="metric-title">
-            Total Records
+    with column:
+        render_html(f"""
+        <div class="metric-card">
+            <div class="metric-icon">{icon}</div>
+            <div class="metric-title">{title}</div>
+            <div class="metric-value">{value}</div>
         </div>
-
-        <div class="metric-value">
-            {len(df)}
-        </div>
-
-    </div>
-    """)
-
-
-with d2:
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">📊</div>
-
-        <div class="metric-title">
-            Total Columns
-        </div>
-
-        <div class="metric-value">
-            {len(df.columns)}
-        </div>
-
-    </div>
-    """)
-
-
-with d3:
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">🔢</div>
-
-        <div class="metric-title">
-            Numerical Columns
-        </div>
-
-        <div class="metric-value">
-            {len(df.select_dtypes(include=np.number).columns)}
-        </div>
-
-    </div>
-    """)
-
-
-with d4:
-
-    target_display = (
-        target_column
-        if target_column
-        else "Not Found"
-    )
-
-    render_html(f"""
-    <div class="metric-card">
-
-        <div class="metric-icon">🎯</div>
-
-        <div class="metric-title">
-            Target Column
-        </div>
-
-        <div class="metric-value"
-             style="font-size:18px;">
-            {target_display}
-        </div>
-
-    </div>
-    """)
+        """)
 
 
 # ============================================================
-# TARGET INFORMATION
+# TARGET ANALYSIS
 # ============================================================
 
 render_html("""
@@ -1155,45 +1010,37 @@ if target_column:
     target_values = pd.to_numeric(
         df[target_column],
         errors="coerce"
-    )
+    ).dropna()
 
-    t1, t2, t3 = st.columns(3)
+    if not target_values.empty:
 
-    with t1:
+        t1, t2, t3 = st.columns(3)
 
-        st.metric(
+        t1.metric(
             "Average Score",
             f"{target_values.mean():.2f}"
         )
 
-    with t2:
-
-        st.metric(
+        t2.metric(
             "Highest Score",
             f"{target_values.max():.2f}"
         )
 
-    with t3:
-
-        st.metric(
+        t3.metric(
             "Lowest Score",
             f"{target_values.min():.2f}"
         )
 
-    chart_data = pd.DataFrame({
-        "Score": target_values.dropna()
-    })
+        st.bar_chart(
+            target_values.value_counts().sort_index()
+        )
 
-    st.bar_chart(
-        chart_data["Score"].value_counts().sort_index()
-    )
+    else:
+        st.info("No valid numeric target values were found.")
 
 else:
-
     st.info(
-        "No standard academic target/score "
-        "column was automatically detected in "
-        "student_academic_data.csv."
+        "No standard academic target column was detected."
     )
 
 
@@ -1248,7 +1095,7 @@ st.dataframe(
 
 
 # ============================================================
-# WEAK AREAS
+# WEAK AREAS AND EARLY WARNING
 # ============================================================
 
 render_html("""
@@ -1259,7 +1106,7 @@ render_html("""
 
 weak_areas = []
 
-if predicted_score < 12:
+if predicted_score is not None and predicted_score < 50:
 
     weak_areas.append(
         "Overall predicted academic performance"
@@ -1286,7 +1133,7 @@ if failures_value > 0:
 if not weak_areas:
 
     weak_areas.append(
-        "No major academic weakness detected"
+        "No major academic weakness detected by these indicators"
     )
 
 
@@ -1294,21 +1141,17 @@ for area in weak_areas:
 
     render_html(f"""
     <div class="recommendation-card">
-
-        <h4>⚠️ {area}</h4>
-
+        <h4>⚠️ {html.escape(area)}</h4>
         <p>
-            This area may require additional
-            attention to improve academic
-            performance.
+            This area may require additional attention
+            to improve academic performance.
         </p>
-
     </div>
     """)
 
 
 # ============================================================
-# RECOMMENDATIONS
+# PERSONALIZED RECOMMENDATIONS
 # ============================================================
 
 render_html("""
@@ -1319,18 +1162,15 @@ render_html("""
 
 recommendations = []
 
-
 if studytime_value < 3:
 
     recommendations.append(
         (
             "📖 Increase Study Time",
-            "Try to maintain a consistent daily "
-            "study schedule and gradually increase "
-            "study time."
+            "Maintain a consistent daily study schedule "
+            "and gradually increase study time."
         )
     )
-
 
 if absences_value > 5:
 
@@ -1338,11 +1178,9 @@ if absences_value > 5:
         (
             "🏫 Improve Attendance",
             "Regular class attendance can help "
-            "understand concepts and improve "
-            "academic performance."
+            "understand concepts and improve performance."
         )
     )
-
 
 if failures_value > 0:
 
@@ -1355,8 +1193,7 @@ if failures_value > 0:
         )
     )
 
-
-if predicted_score < 12:
+if predicted_score is not None and predicted_score < 50:
 
     recommendations.append(
         (
@@ -1366,7 +1203,6 @@ if predicted_score < 12:
         )
     )
 
-
 recommendations.append(
     (
         "📝 Regular Revision",
@@ -1375,173 +1211,392 @@ recommendations.append(
     )
 )
 
-
 for title, description in recommendations:
 
     render_html(f"""
     <div class="recommendation-card">
-
         <h4>{title}</h4>
-
         <p>{description}</p>
-
     </div>
     """)
 
 
 # ============================================================
-# AI / MACHINE LEARNING INFORMATION
+# EXPLAINABLE AI — EXISTING SHAP REPORTS
 # ============================================================
 
 render_html("""
 <div class="section-title">
-    🤖 Artificial Intelligence Analysis
+    🔎 Explainable AI — Global Analysis
 </div>
 """)
 
-ai1, ai2, ai3 = st.columns(3)
+st.info(
+    "SHAP explains how input features influence model predictions. "
+    "The following saved charts describe previous model analysis; "
+    "they are not necessarily explanations for the selected student."
+)
 
+shap_global_path = os.path.join(
+    BASE_DIR,
+    "eda_graphs",
+    "20_shap_global_importance.png"
+)
 
-with ai1:
+shap_summary_path = os.path.join(
+    BASE_DIR,
+    "eda_graphs",
+    "21_shap_summary.png"
+)
 
-    render_html("""
-    <div class="info-card">
-
-        <h3>🌲 Random Forest</h3>
-
-        <p>
-            The project uses a Random Forest
-            regression model to predict
-            student academic performance.
-        </p>
-
-    </div>
-    """)
-
-
-with ai2:
-
-    render_html("""
-    <div class="info-card">
-
-        <h3>⚙️ Preprocessing</h3>
-
-        <p>
-            Numerical and categorical student
-            information is transformed before
-            giving it to the Machine Learning model.
-        </p>
-
-    </div>
-    """)
-
-
-with ai3:
-
-    render_html("""
-    <div class="info-card">
-
-        <h3>🔎 Explainable AI</h3>
-
-        <p>
-            Explainable AI techniques such as
-            SHAP can help understand which
-            factors influence predictions.
-        </p>
-
-    </div>
-    """)
-
-
-
-render_html("""
-<div class="section-title">
-    ⚙️ Model Status
-</div>
-""")
-
-if model_available:
-
-    st.success(
-        "✅ Machine Learning model and "
-        "preprocessor loaded successfully."
-    )
-
-else:
-
-    st.warning(
-        "⚠️ Saved Machine Learning model "
-        "could not be loaded."
-    )
-
-if prediction_error:
-
-    st.warning(
-        "The saved model could not process "
-        "the current dataset schema. "
-        "The dashboard is displaying a safe "
-        "fallback academic indicator."
-    )
-
-
-
-
-render_html("""
-<div class="section-title">
-    📄 Student Performance Report
-</div>
-""")
-
-report_text = f"""
-STUDENT ACADEMIC PERFORMANCE REPORT
-===================================
-
-Student Name     : {student_name}
-Student ID       : {student_id}
-Department       : {department}
-Semester         : {semester}
-
-AI PREDICTION
--------------
-Predicted Score  : {predicted_score:.2f}/20
-Performance      : {performance_status}
-Risk Level       : {risk_level}
-
-ACADEMIC FACTORS
-----------------
-Study Time       : {studytime_value:.0f}
-Absences         : {absences_value:.0f}
-Previous Failures: {failures_value:.0f}
-Attendance       : {attendance_value:.0f}%
-
-DATASET
--------
-Total Records    : {len(df)}
-Total Columns    : {len(df.columns)}
-Target Column    : {target_column if target_column else "Not Found"}
-
-Generated On     : {datetime.now().strftime("%d-%m-%Y %H:%M")}
-"""
-
-st.download_button(
-    label="📥 Download Student Report",
-    data=report_text,
-    file_name="student_performance_report.txt",
-    mime="text/plain"
+shap_individual_path = os.path.join(
+    BASE_DIR,
+    "eda_graphs",
+    "22_individual_student_explanation.png"
 )
 
 
+if os.path.isfile(shap_global_path):
+
+    st.subheader("📊 Global Feature Importance")
+
+    st.image(
+        shap_global_path,
+        use_container_width=True
+    )
+
+else:
+    st.warning("Global SHAP importance chart was not found.")
+
+
+if os.path.isfile(shap_summary_path):
+
+    st.subheader("📈 SHAP Summary Plot")
+
+    st.image(
+        shap_summary_path,
+        use_container_width=True
+    )
+
+else:
+    st.warning("SHAP summary chart was not found.")
+
+
+if os.path.isfile(shap_individual_path):
+
+    st.subheader("👤 Previous Individual Explanation")
+
+    st.caption(
+        "This is a previously generated example, "
+        "not necessarily the selected student."
+    )
+
+    st.image(
+        shap_individual_path,
+        use_container_width=True
+    )
+
+else:
+    st.warning("Individual SHAP example chart was not found.")
+
+
+# ============================================================
+# EXISTING SHAP CSV
+# ============================================================
+
+shap_csv_path = os.path.join(
+    BASE_DIR,
+    "data",
+    "individual_student_explanation.csv"
+)
+
+if os.path.isfile(shap_csv_path):
+
+    try:
+        shap_df = pd.read_csv(shap_csv_path)
+
+        required_columns = {
+            "Feature",
+            "Feature_Value",
+            "SHAP_Value",
+            "Absolute_SHAP"
+        }
+
+        if required_columns.issubset(shap_df.columns):
+
+            shap_df = shap_df.sort_values(
+                "Absolute_SHAP",
+                ascending=False
+            )
+
+            st.subheader(
+                "📋 Previous Feature-Level Explanation"
+            )
+
+            st.dataframe(
+                shap_df,
+                use_container_width=True,
+                hide_index=True
+            )
+
+        else:
+            st.warning(
+                "The SHAP CSV does not contain the expected columns."
+            )
+
+    except Exception as error:
+        st.warning(
+            f"Unable to display the SHAP CSV: {error}"
+        )
+
+
+# ============================================================
+# STUDENT-SPECIFIC SHAP EXPLANATION
+# ============================================================
+
+render_html("""
+<div class="section-title">
+    🔎 Explainable AI — Student-Specific Analysis
+</div>
+""")
+
+st.info(
+    "This section explains how academic features influence "
+    "the selected student's predicted marks. SHAP values "
+    "describe model behavior, not cause and effect."
+)
+
+if predicted_score is None or input_df is None:
+
+    st.warning(
+        "A valid student prediction is required "
+        "before generating a student-specific SHAP explanation."
+    )
+
+elif model_available:
+
+    try:
+        import shap
+        import matplotlib.pyplot as plt
+
+        shap_preprocessor = model.named_steps["preprocessor"]
+        shap_regressor = model.named_steps["model"]
+
+        # Use the same validated input used for prediction.
+        selected_input = input_df.copy()
+
+        # Prepare background data from the database.
+        background = df.copy()
+
+        background.columns = (
+            background.columns.astype(str)
+            .str.strip()
+            .str.lower()
+        )
+
+        missing_features = [
+            feature
+            for feature in MODEL_FEATURES
+            if feature.lower() not in background.columns
+        ]
+
+        if missing_features:
+
+            st.warning(
+                "Missing model features in database: "
+                f"{missing_features}"
+            )
+
+        else:
+
+            background = background[
+                [feature.lower() for feature in MODEL_FEATURES]
+            ].copy()
+
+            background.columns = MODEL_FEATURES
+
+            # Convert numeric background fields.
+            for column in NUMERIC_FEATURES:
+
+                background[column] = pd.to_numeric(
+                    background[column],
+                    errors="coerce"
+                )
+
+            # Convert college marks to training scale.
+            background["Internal_Marks"] = (
+                background["Internal_Marks"] * 100 / 20
+            )
+
+            background["Assignment_Marks"] = (
+                background["Assignment_Marks"] * 100 / 10
+            )
+
+            background["Quiz_Marks"] = (
+                background["Quiz_Marks"] * 100 / 10
+            )
+
+            # Remove rows with missing model inputs.
+            background = background.dropna(
+                subset=MODEL_FEATURES
+            )
+
+            if background.empty:
+
+                st.warning(
+                    "There are not enough complete student "
+                    "records to calculate SHAP."
+                )
+
+            else:
+
+                # Use a small background sample.
+                background = background.head(50)
+
+                # Transform using the trained preprocessing pipeline.
+                transformed_background = (
+                    shap_preprocessor.transform(background)
+                )
+
+                transformed_student = (
+                    shap_preprocessor.transform(selected_input)
+                )
+
+                feature_names = (
+                    shap_preprocessor.get_feature_names_out()
+                )
+
+                # Convert sparse matrices if necessary.
+                if hasattr(
+                    transformed_background,
+                    "toarray"
+                ):
+                    transformed_background = (
+                        transformed_background.toarray()
+                    )
+
+                if hasattr(
+                    transformed_student,
+                    "toarray"
+                ):
+                    transformed_student = (
+                        transformed_student.toarray()
+                    )
+
+                # Explain the trained estimator.
+                explainer = shap.Explainer(
+                    shap_regressor.predict,
+                    transformed_background,
+                    feature_names=feature_names
+                )
+
+                shap_values = explainer(
+                    transformed_student,
+                    max_evals=2 * len(feature_names) + 1
+                )
+
+                values = np.asarray(
+                    shap_values.values
+                ).reshape(-1)
+
+                base_value = float(
+                    np.asarray(
+                        shap_values.base_values
+                    ).reshape(-1)[0]
+                )
+
+                explanation_df = pd.DataFrame({
+                    "Feature": feature_names,
+                    "SHAP_Value": values,
+                    "Absolute_SHAP": np.abs(values)
+                }).sort_values(
+                    "Absolute_SHAP",
+                    ascending=False
+                )
+
+                st.metric(
+                    "Selected Student's Predicted Marks",
+                    f"{predicted_score:.2f}/100"
+                )
+
+                st.caption(
+                    f"SHAP baseline prediction: {base_value:.2f}. "
+                    "Positive SHAP values push the prediction "
+                    "higher than the baseline; negative values "
+                    "push it lower."
+                )
+
+                st.subheader(
+                    "📊 Factors Influencing This Prediction"
+                )
+
+                top_features = (
+                    explanation_df.head(10)
+                    .sort_values("SHAP_Value")
+                )
+
+                fig, ax = plt.subplots(
+                    figsize=(10, 6)
+                )
+
+                ax.barh(
+                    top_features["Feature"],
+                    top_features["SHAP_Value"]
+                )
+
+                ax.axvline(0, linewidth=1)
+
+                ax.set_xlabel(
+                    "SHAP value (effect on model output)"
+                )
+
+                ax.set_title(
+                    "SHAP Explanation for Selected Student"
+                )
+
+                fig.tight_layout()
+
+                st.pyplot(fig)
+
+                plt.close(fig)
+
+                st.subheader("📋 Student SHAP Values")
+
+                st.dataframe(
+                    explanation_df,
+                    use_container_width=True,
+                    hide_index=True
+                )
+
+                st.download_button(
+                    "📥 Download Student SHAP Explanation",
+                    data=explanation_df.to_csv(index=False),
+                    file_name=f"shap_explanation_{student_id}.csv",
+                    mime="text/csv"
+                )
+
+    except Exception as error:
+
+        st.warning(
+            "The student-specific SHAP explanation "
+            "could not be generated."
+        )
+
+        st.code(str(error))
+
+
+# ============================================================
+# FOOTER
+# ============================================================
 
 render_html("""
 <div class="footer">
-
-    🎓 Student Academic Performance
-    Intelligence System
-
-    <br><br>
-
-    Powered by Machine Learning •
-    Random Forest • Explainable AI
-
+    <p>
+        Trekverse — Intelligent Academic Performance
+        Monitoring and Recommendation System
+    </p>
+    <p>
+        AI-Powered Student Academic Analytics
+    </p>
 </div>
 """)

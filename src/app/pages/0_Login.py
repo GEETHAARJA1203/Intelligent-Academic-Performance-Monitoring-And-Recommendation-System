@@ -2,17 +2,12 @@ import streamlit as st
 import os
 import sys
 
-
 # =========================================================
 # IMPORT AUTH MODULE
 # =========================================================
 
 BASE_DIR = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__),
-        "..",
-        ".."
-    )
+    os.path.join(os.path.dirname(__file__), "..", "..")
 )
 
 if BASE_DIR not in sys.path:
@@ -44,13 +39,12 @@ if "user" not in st.session_state:
 
 
 # =========================================================
-# SIMPLE CSS
+# CSS
 # =========================================================
 
 st.markdown(
     """
     <style>
-    
     .stApp {
         background-color: #f5f7fb;
     }
@@ -59,24 +53,15 @@ st.markdown(
         text-align: center;
         font-size: 34px;
         font-weight: bold;
-        margin-top: 40px;
+        margin-top: 30px;
     }
 
     .login-subtitle {
         text-align: center;
         color: #666666;
         font-size: 16px;
-        margin-bottom: 30px;
+        margin-bottom: 25px;
     }
-
-    .demo-box {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
-        border: 1px solid #dddddd;
-        margin-top: 25px;
-    }
-
     </style>
     """,
     unsafe_allow_html=True
@@ -84,7 +69,7 @@ st.markdown(
 
 
 # =========================================================
-# IF ALREADY LOGGED IN
+# ALREADY LOGGED IN
 # =========================================================
 
 if st.session_state.logged_in:
@@ -96,12 +81,13 @@ if st.session_state.logged_in:
         f"You are logged in as {user['role']}."
     )
 
-    st.write("")
+    st.write("Role:", user["role"])
+    if user["role"] == "Student":
 
-    if st.button(
-        "🚪 Logout",
-        use_container_width=True
-    ):
+        if st.button("Open Student Dashboard", use_container_width=True):
+            st.switch_page("pages/5_Student_Dashboard.py")
+
+    if st.button("🚪 Logout", use_container_width=True):
 
         st.session_state.logged_in = False
         st.session_state.user = None
@@ -122,7 +108,7 @@ st.markdown(
 
 st.markdown(
     '<div class="login-subtitle">'
-    'Login to access the Machine Learning Dashboard'
+    'Login to access the Academic Performance Dashboard'
     '</div>',
     unsafe_allow_html=True
 )
@@ -132,89 +118,70 @@ st.markdown(
 # LOGIN FORM
 # =========================================================
 
-st.subheader("🔐 Login")
+with st.form("login_form"):
 
-username = st.text_input(
-    "👤 Username",
-    placeholder="Enter username"
-)
+    st.subheader("🔐 User Login")
 
-password = st.text_input(
-    "🔒 Password",
-    type="password",
-    placeholder="Enter password"
-)
+    username = st.text_input("Username")
 
+    password = st.text_input(
+        "Password",
+        type="password"
+    )
 
-# =========================================================
-# LOGIN BUTTON
-# =========================================================
+    login_button = st.form_submit_button(
+        "Login",
+        use_container_width=True
+    )
 
-if st.button(
-    "🚀 Login",
-    use_container_width=True
-):
+    if login_button:
 
-    if username.strip() == "":
-        st.warning("Please enter your username.")
+        if not username or not password:
 
-    elif password == "":
-        st.warning("Please enter your password.")
-
-    else:
-
-        user = authenticate_user(
-            username.strip(),
-            password
-        )
-
-        if user is not None:
-
-            st.session_state.logged_in = True
-            st.session_state.user = user
-
-            st.success(
-                f"Login successful! Welcome {user['username']}."
-            )
-
-            st.rerun()
+            st.warning("Please enter both username and password.")
 
         else:
 
-            st.error(
-                "❌ Invalid username or password."
+            user = authenticate_user(
+                username.strip(),
+                password
             )
 
+            if user is not None:
+
+                st.session_state.logged_in = True
+                st.session_state.user = user
+
+                st.success("Login successful!")
+
+                st.rerun()
+
+            else:
+
+                st.error("Invalid username or password.")
+
 
 # =========================================================
-# DEMO ACCOUNTS
+# DEMO CREDENTIALS
 # =========================================================
 
-st.markdown("---")
+with st.expander("View Demo Login Credentials"):
 
-st.subheader("🔑 Demo Accounts")
+    st.markdown(
+        """
+        **Admin**
+        - Username: `admin`
+        - Password: `admin123`
 
-st.info(
-    """
-    **👑 Admin**
+        **Faculty**
+        - Username: `faculty`
+        - Password: `faculty123`
 
-    Username: `admin`
-
-    Password: `admin123`
-
-    **👨‍🏫 Faculty**
-
-    Username: `faculty`
-
-    Password: `faculty123`
-
-    **🎓 Student**
-
-    Username: `student`
-
-    Password: `student123`
-    """
-)
+        **Student**
+        - Username: `student`
+        - Password: `student123`
+        """
+    )
 
 
 # =========================================================
@@ -224,5 +191,5 @@ st.info(
 st.markdown("---")
 
 st.caption(
-    "Student Performance Prediction & Analytics System"
+    "Intelligent Academic Performance Monitoring & Recommendation System"
 )
